@@ -18,15 +18,16 @@ class SynthViewModel: NSObject, ObservableObject {
 
     @Published var isFinished: Int = 0
     @Published var speechRecognizer = SpeechRecognizer()
+    @Published var speechVoices: [String] = AVSpeechSynthesisVoice.speechVoices().map({$0.language})
 
     override init() {
         super.init()
         speechSynthesizer = AVSpeechSynthesizer()
         speechSynthesizer.delegate = self
-        voice = AVSpeechSynthesisVoice(language: "en-IN")
+        voice = AVSpeechSynthesisVoice(language: "ja-JP")
     }
 
-    func speak(text: String) {
+    func speak(text: String, lang: String = "ja-JP") {
 
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -34,12 +35,12 @@ class SynthViewModel: NSObject, ObservableObject {
             try audioSession.setMode(AVAudioSession.Mode.spokenAudio)
             let utterance = AVSpeechUtterance(string: text)
             // Configure the utterance.
-            utterance.rate = 0.57
+            utterance.rate = 0.3
             utterance.pitchMultiplier = 0.8
             utterance.postUtteranceDelay = 0.2
             utterance.volume = 0.8
 
-            utterance.voice = self.voice
+            utterance.voice = AVSpeechSynthesisVoice(language: lang)
             self.speechSynthesizer.continueSpeaking()
             self.speechSynthesizer.speak(utterance)
 //            self.stopEngine()
